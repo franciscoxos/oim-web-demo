@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:oim-demo": "SUBPATH=oim-demo next build",
     "start": "next start"
   },
   "dependencies": {
