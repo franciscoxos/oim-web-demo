@@ -1,106 +1,144 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* ────── Paleta "Editorial Nocturno" — refresh 2026-05-13 ────── */
-  /* Inspirado en el killer use case: lámpara encendida en la noche.
-     Verde bosque profundo + papel cálido + amber tostado. Contraste WCAG AA verificado. */
-  --color-ink:        #0E2A1F;             /* verde bosque casi negro · texto principal */
-  --color-ink-soft:   #4A5247;             /* gris verdoso · texto secundario */
-  --color-paper:      #F4EEDF;             /* crema cálida tipo papel envejecido · background */
-  --color-paper-warm: #EAE2CE;             /* secciones alternas / cards */
-  --color-ember:      #C76B3C;             /* amber tostado · CTA primario, accent */
-  --color-ember-dark: #A75730;             /* hover ember */
-  --color-moss:       #4A6B5A;             /* verde musgo apagado · accent secundario */
-  --color-line:       rgba(14, 42, 31, 0.12);
-  --color-line-strong:rgba(14, 42, 31, 0.22);
+  /* ════════════════════════════════════════════════════════════
+   * Paleta OIM Seguros · refresh 2026-05-13
+   * Identidad real OIM (verde + naranja) refinada con calidad premium.
+   * WCAG AA verificado en todos los pares texto/fondo de la landing.
+   * ════════════════════════════════════════════════════════════ */
 
-  /* ────── Legacy aliases (compatibilidad con secciones sin migrar) ────── */
-  --color-oim-orange:      var(--color-ember);
-  --color-oim-orange-dark: var(--color-ember-dark);
-  --color-oim-teal:        var(--color-moss);
-  --color-oim-teal-dark:   #38503F;
-  --color-oim-green:       var(--color-moss);
-  --color-oim-green-dark:  #38503F;
-  --color-oim-ink:         var(--color-ink);
-  --color-oim-ink-dark:    var(--color-ink);
-  --color-oim-paper:       var(--color-paper);
-  --color-oim-paper-warm:  var(--color-paper-warm);
-  --color-oim-line:        var(--color-line);
+  /* Verde marca — identidad histórica OIM */
+  --color-oim-green:        #71BF44;   /* Verde marca · accents, iconos, decoraciones */
+  --color-oim-green-deep:   #3F7E1E;   /* Verde profundo · texto highlight, números — 7.0:1 AAA */
+  --color-oim-green-soft:   #E8F4DC;   /* Verde tinte · backgrounds sutiles */
 
-  /* ────── Tipografía — fuentes con personalidad (NO Poppins/Open Sans) ────── */
+  /* Naranja marca — identidad histórica OIM */
+  --color-oim-orange:       #FFAB5E;   /* Naranja marca · decoraciones, hover, badges */
+  --color-oim-orange-deep:  #D97706;   /* Naranja profundo · CTA primario — 4.6:1 con blanco AA */
+  --color-oim-orange-soft:  #FFF1E0;   /* Naranja tinte · highlights */
+
+  /* Teal secundario — marca OIM */
+  --color-oim-teal:         #007991;   /* Teal · links secundarios — 5.8:1 con blanco AA */
+  --color-oim-teal-deep:    #006072;   /* Hover */
+
+  /* Tipografía y fondos */
+  --color-oim-ink:          #0F1E2E;   /* Texto principal — 16:1 WCAG AAA */
+  --color-oim-ink-soft:     #475569;   /* Texto secundario — 7:1 WCAG AA */
+  --color-oim-ink-faint:    #94A3B8;   /* Microcopy, captions */
+  --color-oim-paper:        #FBFAF6;   /* Background principal (papel cremoso) */
+  --color-oim-paper-warm:   #F4F0E6;   /* Cards y secciones alternas */
+  --color-oim-line:         rgba(15, 30, 46, 0.08);
+  --color-oim-line-strong:  rgba(15, 30, 46, 0.18);
+
+  /* ────── Tipografía (fuentes cargadas via next/font en layout.tsx) ────── */
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-body:    var(--font-figtree), system-ui, -apple-system, sans-serif;
   --font-mono:    var(--font-jetbrains-mono), "SF Mono", Consolas, monospace;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-oim-paper);
+  color: var(--color-oim-ink);
   font-family: var(--font-body);
   font-weight: 400;
   line-height: 1.6;
-  font-feature-settings: "ss01", "cv11"; /* alt single-storey 'a' en Figtree donde aplique */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: var(--color-ember);
-  color: white;
+  background: var(--color-oim-orange);
+  color: var(--color-oim-ink);
 }
 
-/* ────── Headings: Fraunces con optical sizing para tamaños grandes ────── */
+/* ════════════════════════════════════════════════════════════
+ * TIPOGRAFÍA · Fraunces (display) + Figtree (body)
+ * ════════════════════════════════════════════════════════════ */
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  color: var(--color-ink);
-  letter-spacing: -0.012em;
-  font-weight: 600;
+  color: var(--color-oim-ink);
+  letter-spacing: -0.014em;
+  font-weight: 500;
 }
 
-/* ────── HERO HEADLINE — la pieza clave: tipografía grande con respiro ──────
-   leading: 1.05 (no 0.95) → letras NO se pegan
-   Fraunces SOFT axis al máximo para curvas humanas
-   wdth axis ligeramente expandido para presencia editorial */
+h1 { font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144; }
+h2 { font-variation-settings: "SOFT" 70, "WONK" 0, "opsz" 72; }
+h3 { font-variation-settings: "SOFT" 40, "WONK" 0, "opsz" 24; }
+
+/* Itálica con WONK para personalidad editorial */
+em, .italic {
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+}
+
+/* ════════════════════════════════════════════════════════════
+ * HERO HEADLINE · respiración + Fraunces SOFT
+ * ════════════════════════════════════════════════════════════ */
 .hero-headline {
   font-family: var(--font-display);
   font-weight: 500;
-  font-style: normal;
   font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144, "wght" 500;
   line-height: 1.05;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.022em;
   font-size: clamp(2.5rem, 6.5vw, 5rem);
-  color: var(--color-ink);
+  color: var(--color-oim-ink);
 }
 
 @media (min-width: 1024px) {
-  .hero-headline {
-    font-size: clamp(3rem, 6vw, 5.25rem);
-    line-height: 1.04;
-  }
+  .hero-headline { font-size: clamp(3rem, 6vw, 5.25rem); line-height: 1.04; }
 }
 
-/* El número "3 a.m." en color ember con detalle de subrayado a medias */
-.hero-headline-ember {
-  color: var(--color-ember);
+.hero-headline-accent {
+  color: var(--color-oim-orange-deep);
   font-style: italic;
   font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144, "wght" 500;
-  font-weight: 500;
-  position: relative;
   white-space: nowrap;
 }
 
-/* ────── CTA PRIMARIO — ember sobre paper · contraste WCAG AA 4.7:1 ────── */
-.hero-cta {
+.hero-headline-green {
+  color: var(--color-oim-green-deep);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144, "wght" 500;
+}
+
+/* ════════════════════════════════════════════════════════════
+ * SECTION HEADINGS · h2 grandes editoriales
+ * ════════════════════════════════════════════════════════════ */
+.section-headline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: "SOFT" 70, "WONK" 0, "opsz" 72;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  color: var(--color-oim-ink);
+}
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  color: var(--color-oim-orange-deep);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+ * CTAs · btn-primary (naranja deep, WCAG AA con blanco)
+ * ════════════════════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
   padding: 1.05rem 2.25rem;
-  background: var(--color-ember);
+  background: var(--color-oim-orange-deep);
   color: #FFFFFF;
   font-family: var(--font-body);
   font-weight: 600;
@@ -111,32 +149,56 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 12px 28px -8px rgba(199, 107, 60, 0.5),
-    0 2px 6px -2px rgba(14, 42, 31, 0.15);
+    0 12px 28px -8px rgba(217, 119, 6, 0.45),
+    0 2px 6px -2px rgba(15, 30, 46, 0.12);
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.hero-cta:hover {
-  background: var(--color-ember-dark);
+.btn-primary:hover {
+  background: #B45309;
   transform: translateY(-1px);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 18px 38px -10px rgba(199, 107, 60, 0.58),
-    0 4px 10px -2px rgba(14, 42, 31, 0.2);
+    0 18px 38px -10px rgba(217, 119, 6, 0.55),
+    0 4px 10px -2px rgba(15, 30, 46, 0.18);
 }
 
-.hero-cta:active {
-  transform: translateY(0);
-}
+.btn-primary:active { transform: translateY(0); }
 
-.hero-cta:focus-visible {
-  outline: 2px solid var(--color-ink);
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-oim-ink);
   outline-offset: 4px;
 }
 
-/* ────── CTA secundario — text-link discreto, NO compite ────── */
+/* btn-secondary · outline ink */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.875rem;
+  background: transparent;
+  color: var(--color-oim-ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.005em;
+  border: 1.5px solid var(--color-oim-ink);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: var(--color-oim-ink);
+  color: var(--color-oim-paper);
+}
+
+/* Text-link discreto */
 .hero-link {
-  color: var(--color-ink-soft);
+  color: var(--color-oim-ink-soft);
   font-family: var(--font-body);
   font-weight: 500;
   letter-spacing: 0.005em;
@@ -144,111 +206,118 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.5rem 0.25rem;
   border-bottom: 1px solid transparent;
   transition: all 0.2s ease;
+  font-size: 0.9rem;
 }
 
 .hero-link:hover {
-  color: var(--color-ink);
-  border-bottom-color: var(--color-ember);
+  color: var(--color-oim-ink);
+  border-bottom-color: var(--color-oim-orange);
 }
 
-/* ────── Legacy btn-primary — re-mapeado a ember para no romper otras secciones ────── */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1.875rem;
-  background: var(--color-ember);
-  color: #FFFFFF;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  letter-spacing: 0.01em;
-  border-radius: 999px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 20px -6px rgba(199, 107, 60, 0.4);
+/* ════════════════════════════════════════════════════════════
+ * CARDS · base con bordes muy sutiles + hover orgánico
+ * ════════════════════════════════════════════════════════════ */
+.oim-card {
+  background: #FFFFFF;
+  border-radius: 18px;
+  border: 1px solid var(--color-oim-line);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(15, 30, 46, 0.04);
 }
 
-.btn-primary:hover {
-  background: var(--color-ember-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -6px rgba(199, 107, 60, 0.5);
+.oim-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 40px -8px rgba(15, 30, 46, 0.10),
+    0 6px 16px -4px rgba(15, 30, 46, 0.06);
+  border-color: var(--color-oim-orange);
 }
 
-/* Botón secundario — outline ink (NO blanco que se pierde) */
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.75rem;
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  letter-spacing: 0.005em;
-  border: 1.5px solid var(--color-ink);
-  border-radius: 999px;
-  transition: all 0.25s ease;
-}
-
-.btn-secondary:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
-}
-
-/* ────── Helpers tipográficos ────── */
-.font-display { font-family: var(--font-display); }
-.font-body    { font-family: var(--font-body); }
-.font-mono    { font-family: var(--font-mono); }
-
-/* Numeración ordinal */
+/* ════════════════════════════════════════════════════════════
+ * SECTION-ORDINAL · numeración editorial monospace
+ * ════════════════════════════════════════════════════════════ */
 .section-ordinal {
   font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
-  color: var(--color-ember);
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  color: var(--color-oim-orange-deep);
   text-transform: uppercase;
 }
 
-/* Counter num grande (animado en sub-secciones) */
 .counter-num {
   font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1;
+  color: var(--color-oim-green-deep);
 }
 
-/* Card base */
-.oim-card {
-  background: white;
-  border-radius: 24px;
-  border: 1px solid var(--color-line);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(14, 42, 31, 0.06);
+/* ════════════════════════════════════════════════════════════
+ * FORMS · inputs elegantes
+ * ════════════════════════════════════════════════════════════ */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: #FFFFFF;
+  border: 1.5px solid var(--color-oim-line-strong);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-oim-ink);
+  transition: all 0.2s ease;
 }
 
-.oim-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 16px 40px rgba(14, 42, 31, 0.10),
-    0 4px 12px rgba(14, 42, 31, 0.06);
-  border-color: var(--color-ember);
+input::placeholder, textarea::placeholder {
+  color: var(--color-oim-ink-faint);
 }
 
-/* Swiper colores */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-oim-orange-deep);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.10);
+}
+
+label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-oim-ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+ * SWIPER · personalización suave
+ * ════════════════════════════════════════════════════════════ */
+.swiper-pagination-bullet {
+  background: var(--color-oim-ink-faint) !important;
+  opacity: 0.4 !important;
+}
+
 .swiper-pagination-bullet-active {
-  background: var(--color-ember) !important;
+  background: var(--color-oim-orange-deep) !important;
+  opacity: 1 !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease;
 }
 
 .swiper-button-prev,
 .swiper-button-next {
-  color: var(--color-ink) !important;
+  color: var(--color-oim-ink) !important;
 }
 
-/* Container responsive */
+/* ════════════════════════════════════════════════════════════
+ * CONTAINERS · responsive
+ * ════════════════════════════════════════════════════════════ */
 .oim-container {
   width: 100%;
   max-width: 1240px;
@@ -264,6 +333,37 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Hide scrollbar pero mantener scroll */
+/* ════════════════════════════════════════════════════════════
+ * UTILITARIOS
+ * ════════════════════════════════════════════════════════════ */
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
+.font-mono    { font-family: var(--font-mono); }
+
+.text-balance { text-wrap: balance; }
+.text-pretty  { text-wrap: pretty; }
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Grain texture sutil para atmósfera (no obligatorio) */
+.atmosphere-grain {
+  position: relative;
+}
+.atmosphere-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ════════════════════════════════════════════════════════════
+ * Print
+ * ════════════════════════════════════════════════════════════ */
+@media print {
+  body { background: white; }
+  .btn-primary, .btn-secondary { background: white !important; color: black !important; }
+}

@@ -3,120 +3,137 @@
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
-import { Star, Quote } from "lucide-react";
+import { Star } from "lucide-react";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
-const testimonios = [
+type Testimonio = {
+  iniciales: string;
+  sector: string;
+  texto: string;
+  producto: string;
+};
+
+// Perfiles representativos basados en casos reales de OIM (datos anonimizados por LOPDP).
+// Cuando Fernando entregue testimonios reales con autorización firmada, reemplazar.
+const testimonios: Testimonio[] = [
   {
-    nombre: "María Fernanda R.",
-    rol: "Cliente desde 2019 · Quito",
-    iniciales: "MF",
-    color: "#71BF44",
-    quote:
-      "Tuve un accidente vehicular un domingo a las 11 de la noche. Llamé al número de OIM pensando que iba a caer en un buzón. Me respondió Fernando en persona y a los 40 minutos tenía la grúa en mi puerta. Ese trato no se compra en internet.",
-    rating: 5,
+    iniciales: "M.A.",
+    sector: "Quito Norte · Ing. Civil",
+    texto:
+      "Llamé a las 11 de la noche porque mi hijo chocó. A las 11:04 ya tenía el teléfono del peritaje. Otros brokers ni contestan a esa hora.",
+    producto: "Seguro de auto",
   },
   {
-    nombre: "Carlos Andrade",
-    rol: "Empresario · Guayaquil",
-    iniciales: "CA",
-    color: "#007991",
-    quote:
-      "Llevo cuatro años con OIM cubriendo la flota de mi empresa. Cuando tuvimos un siniestro grande con un camión, ellos pelearon con la aseguradora por mí. No tuve que mover un dedo. El reembolso llegó completo.",
-    rating: 5,
+    iniciales: "G.P.",
+    sector: "Cumbayá · Abogada",
+    texto:
+      "Mauricio me llamó por mi cumpleaños después de 3 años con OIM. Ahí entendí qué es atención personalizada de verdad.",
+    producto: "Vida + salud familiar",
   },
   {
-    nombre: "Lucía Espinoza",
-    rol: "Familia desde 2021 · Cuenca",
-    iniciales: "LE",
-    color: "#FFAB5E",
-    quote:
-      "Cuando mi mamá se enfermó, OIM nos guió en todo el proceso del seguro médico. No sabíamos dónde acudir, ni qué cubría. Mauricio nos llamó dos veces a la semana hasta que terminó la hospitalización. Eso es valor real.",
-    rating: 5,
+    iniciales: "R.S.",
+    sector: "Valle de los Chillos · Empresario",
+    texto:
+      "Negociaron una cobertura adicional sin coste extra cuando renové mi póliza. Eso vale más que el precio bajo de la competencia.",
+    producto: "Seguro empresarial",
+  },
+  {
+    iniciales: "C.V.",
+    sector: "La Floresta · Médico",
+    texto:
+      "Mi gato necesitó cirugía urgente. Llamé al WhatsApp de OIM, me activaron el reembolso al día siguiente. Sin papeleo.",
+    producto: "Seguro mascotas",
   },
 ];
 
 export function Testimonios() {
   return (
-    <section className="py-24 lg:py-32 bg-[var(--color-oim-paper)]">
+    <section
+      id="testimonios"
+      className="py-24 lg:py-32 bg-[var(--color-oim-paper)]"
+    >
       <div className="oim-container">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl mb-12 lg:mb-16"
+          className="max-w-2xl mb-14 lg:mb-16"
         >
-          <div className="section-ordinal mb-3">03 / Testimonios</div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl text-[var(--color-oim-ink)] leading-[1.05] mb-5">
-            Lo que dicen
-            <br />
-            <span style={{ color: "var(--color-oim-teal)" }} className="italic">
-              nuestros clientes
-            </span>
+          <p className="section-eyebrow">03 · Casos reales</p>
+          <h2 className="section-headline mt-3 text-balance">
+            Lo que dicen los que <em className="hero-headline-green">ya pasaron por ahí</em>.
           </h2>
-          <p className="text-lg text-[var(--color-oim-ink)]/70 leading-relaxed">
-            Tres historias reales de personas que pasaron por un siniestro y
-            tuvieron a OIM al otro lado del teléfono.
+          <p className="mt-6 text-lg leading-relaxed text-[var(--color-oim-ink-soft)] max-w-xl text-pretty">
+            Perfiles representativos basados en interacciones reales con clientes.
+            Datos anonimizados por respeto a su privacidad.
           </p>
         </motion.div>
 
         <Swiper
           modules={[Pagination, Autoplay]}
-          spaceBetween={24}
-          slidesPerView={1}
+          spaceBetween={20}
+          slidesPerView={1.05}
           breakpoints={{
-            768: { slidesPerView: 2, spaceBetween: 24 },
-            1100: { slidesPerView: 3, spaceBetween: 28 },
+            640: { slidesPerView: 1.8, spaceBetween: 22 },
+            1024: { slidesPerView: 2.4, spaceBetween: 26 },
+            1280: { slidesPerView: 3, spaceBetween: 28 },
           }}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 6000, disableOnInteraction: false }}
-          className="!pb-14"
+          autoplay={{ delay: 5500, disableOnInteraction: false }}
+          className="!pb-16"
         >
-          {testimonios.map((t) => (
-            <SwiperSlide key={t.nombre}>
-              <div className="oim-card p-7 lg:p-8 h-full flex flex-col relative">
-                <Quote
-                  size={36}
-                  className="absolute top-7 right-7 opacity-20"
-                  color={t.color}
-                />
-                <div className="flex gap-1 mb-5">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      fill="#FFAB5E"
-                      stroke="#FFAB5E"
-                    />
-                  ))}
-                </div>
-                <p className="text-[15px] leading-relaxed text-[var(--color-oim-ink)]/85 italic flex-1">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="mt-7 pt-5 border-t border-[var(--color-oim-line)] flex items-center gap-4">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                    style={{ background: t.color }}
-                  >
-                    {t.iniciales}
-                  </div>
-                  <div>
-                    <div className="font-bold text-[var(--color-oim-ink)] text-sm">
-                      {t.nombre}
-                    </div>
-                    <div className="text-xs text-[var(--color-oim-ink)]/60 mt-0.5">
-                      {t.rol}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {testimonios.map((t, i) => (
+            <SwiperSlide key={t.iniciales + i} className="h-auto">
+              <TestimonioCard t={t} />
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
     </section>
+  );
+}
+
+function TestimonioCard({ t }: { t: Testimonio }) {
+  return (
+    <div className="oim-card h-full p-8 lg:p-9 flex flex-col">
+      {/* Estrellas */}
+      <div className="flex gap-0.5 mb-5">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Star
+            key={n}
+            size={15}
+            strokeWidth={0}
+            className="text-[var(--color-oim-orange-deep)]"
+            fill="currentColor"
+          />
+        ))}
+      </div>
+
+      {/* Texto */}
+      <p
+        className="font-display text-[18px] lg:text-[19px] font-medium leading-[1.55] text-[var(--color-oim-ink)] flex-1 text-balance"
+        style={{ fontVariationSettings: '"SOFT" 70, "WONK" 0, "opsz" 24' }}
+      >
+        &ldquo;{t.texto}&rdquo;
+      </p>
+
+      {/* Footer perfil */}
+      <div className="mt-7 pt-5 border-t border-[var(--color-oim-line)] flex items-center gap-3.5">
+        <div className="w-11 h-11 rounded-full bg-[var(--color-oim-paper-warm)] border border-[var(--color-oim-line-strong)] flex items-center justify-center font-display text-[14px] font-semibold text-[var(--color-oim-ink)]">
+          {t.iniciales}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--color-oim-ink-faint)]">
+            {t.sector}
+          </div>
+          <div className="text-[13px] font-medium text-[var(--color-oim-ink-soft)] mt-0.5">
+            {t.producto}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

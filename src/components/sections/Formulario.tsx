@@ -1,152 +1,410 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { Send, Loader2, CheckCircle2, MessageCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useMemo } from "react";
+import { Send, Loader2, CheckCircle2, MessageCircle, Phone } from "lucide-react";
 
-const tiposSeguro = [
-  "Seguro vehicular",
-  "Seguro de hogar",
-  "Seguro médico",
-  "Seguro de vida",
-  "Seguro de mascotas",
-  "Seguro empresarial",
-  "Otro / consulta general",
+type Producto = "auto" | "moto" | "salud" | "vida" | "mascotas";
+
+type FormState = {
+  nombre: string;
+  whatsapp: string;
+  email: string;
+  producto: Producto | "";
+  // Expansion fields · solo se rellenan si producto coincide
+  anio_vehiculo: string;
+  placa: string;
+  edad: string;
+  cobertura_familiar: "" | "yo" | "yo_pareja" | "familia";
+  // Consentimiento LOPDP
+  consent: boolean;
+};
+
+const initialState: FormState = {
+  nombre: "",
+  whatsapp: "",
+  email: "",
+  producto: "",
+  anio_vehiculo: "",
+  placa: "",
+  edad: "",
+  cobertura_familiar: "",
+  consent: false,
+};
+
+const productos: { value: Producto; label: string }[] = [
+  { value: "auto", label: "Auto" },
+  { value: "moto", label: "Moto" },
+  { value: "salud", label: "Salud" },
+  { value: "vida", label: "Vida" },
+  { value: "mascotas", label: "Mascotas" },
 ];
 
 export function Formulario() {
-  const [status, setStatus] = useState<"idle" | "sending" | "ok">("idle");
+  const [form, setForm] = useState<FormState>(initialState);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  // ────── Validación + reglas de expansión ──────
+  const expansionAuto = form.producto === "auto";
+  const expansionSalud = form.producto === "salud";
+
+  const valid = useMemo(() => {
+    if (!form.nombre.trim()) return false;
+    if (!/^[0-9+\-\s()]{7,}$/.test(form.whatsapp.trim())) return false;
+    if (!form.producto) return false;
+    if (!form.consent) return false;
+    if (expansionAuto && !form.anio_vehiculo.trim()) return false;
+    if (expansionSalud && !form.edad.trim()) return false;
+    return true;
+  }, [form, expansionAuto, expansionSalud]);
+
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("sending");
-    // Mock UI — el wiring a backend (Meta Pixel + lead push a Maya/CdM) se hace en fase final.
-    setTimeout(() => setStatus("ok"), 1100);
+    if (!valid || status === "submitting") return;
+
+    setStatus("submitting");
+    setErrorMsg("");
+
+    try {
+      // TODO endpoint real cuando esté listo (Supabase function de OIM)
+      // Por ahora simulamos para demo en preview
+      await new Promise((r) => setTimeout(r, 900));
+      setStatus("success");
+
+      // Abrir WhatsApp en pestaña nueva con mensaje pre-cargado
+      const mensaje = `Hola, soy ${form.nombre}. Quiero cotizar un seguro de ${form.producto}.`;
+      const waUrl = `https://wa.me/593997866343?text=${encodeURIComponent(mensaje)}`;
+      window.open(waUrl, "_blank", "noopener");
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Algo no salió bien. Llámanos directamente al 099 786 6343.");
+    }
   }
 
   return (
     <section
       id="contacto"
-      className="py-24 lg:py-32 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, var(--color-oim-paper-warm) 0%, var(--color-oim-paper) 100%)",
-      }}
+      className="relative py-24 lg:py-32 bg-[var(--color-oim-paper-warm)] atmosphere-grain overflow-hidden"
     >
-      <div className="oim-container">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          {/* Texto izquierda */}
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-5"
-          >
-            <div className="section-ordinal mb-3">04 / Contacto</div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl text-[var(--color-oim-ink)] leading-[1.05] mb-5">
-              Recibe tu cotización en{" "}
-              <span style={{ color: "var(--color-oim-teal)" }} className="italic">
-                menos de 24 horas
-              </span>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full opacity-[0.10] blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle at center, var(--color-oim-orange) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="oim-container relative z-10">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* ────── Header lateral ────── */}
+          <div className="lg:col-span-5">
+            <p className="section-eyebrow">04 · Cuéntame de ti</p>
+            <h2 className="section-headline mt-3 text-balance">
+              En <em className="hero-headline-green">1 minuto</em> empezamos.
             </h2>
-            <p className="text-lg text-[var(--color-oim-ink)]/70 leading-relaxed mb-10">
-              Cuéntanos qué necesitas asegurar. Un asesor real revisa tu caso y
-              te llama o escribe en menos de un día hábil con opciones
-              concretas. Sin formularios largos, sin chatbots.
+            <p className="mt-6 text-lg leading-relaxed text-[var(--color-oim-ink-soft)] text-pretty">
+              Margarita te contacta por WhatsApp en cuanto envíes el formulario.
+              Conversamos lo justo y te paso con tu asesor humano.
             </p>
 
-            <a
-              href="https://wa.me/593990000000?text=Hola%2C%20quiero%20cotizar%20un%20seguro"
-              target="_blank"
-              rel="noopener"
-              className="inline-flex items-center gap-3 text-[var(--color-oim-teal)] font-semibold hover:text-[var(--color-oim-teal-dark)] transition-colors"
-            >
-              <MessageCircle size={20} />
-              <span className="border-b border-current pb-0.5">
-                ¿Prefieres chatear por WhatsApp? Click aquí
-              </span>
-            </a>
-          </motion.div>
+            {/* Contactos directos */}
+            <div className="mt-10 space-y-4">
+              <a
+                href="https://wa.me/593997866343?text=Hola%20OIM%2C%20quiero%20conversar"
+                target="_blank"
+                rel="noopener"
+                className="group flex items-center gap-4 p-4 -mx-4 rounded-xl hover:bg-white/60 transition-colors"
+              >
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[var(--color-oim-green-soft)] flex items-center justify-center">
+                  <MessageCircle size={20} strokeWidth={2.2} className="text-[var(--color-oim-green-deep)]" />
+                </div>
+                <div>
+                  <div className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--color-oim-ink-faint)]">
+                    WhatsApp · 24/7
+                  </div>
+                  <div className="font-display text-[17px] font-semibold text-[var(--color-oim-ink)] group-hover:text-[var(--color-oim-orange-deep)] transition-colors">
+                    Conversa con Margarita
+                  </div>
+                </div>
+              </a>
 
-          {/* Formulario */}
+              <a
+                href="tel:+593997866343"
+                className="group flex items-center gap-4 p-4 -mx-4 rounded-xl hover:bg-white/60 transition-colors"
+              >
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[var(--color-oim-orange-soft)] flex items-center justify-center">
+                  <Phone size={20} strokeWidth={2.2} className="text-[var(--color-oim-orange-deep)]" />
+                </div>
+                <div>
+                  <div className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-[var(--color-oim-ink-faint)]">
+                    Llámanos directo
+                  </div>
+                  <div className="font-mono text-[17px] tabular-nums font-medium text-[var(--color-oim-ink)] group-hover:text-[var(--color-oim-orange-deep)] transition-colors">
+                    099 786 6343
+                  </div>
+                </div>
+              </a>
+
+              <div className="pt-2 text-[13px] text-[var(--color-oim-ink-soft)] leading-relaxed">
+                ¿Prefieres email?{" "}
+                <a
+                  href="mailto:servicioalcliente@oimseguros.com"
+                  className="text-[var(--color-oim-orange-deep)] hover:underline font-medium"
+                >
+                  servicioalcliente@oimseguros.com
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ────── Formulario ────── */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="lg:col-span-7"
           >
             <form
-              onSubmit={onSubmit}
-              className="oim-card p-7 lg:p-10 space-y-5"
+              onSubmit={handleSubmit}
+              className="bg-white rounded-2xl border border-[var(--color-oim-line)] p-7 lg:p-10 shadow-[0_8px_40px_-12px_rgba(15,30,46,0.06)]"
             >
-              {status === "ok" ? (
+              {/* ────── Estado: success ────── */}
+              {status === "success" ? (
                 <div className="text-center py-8">
-                  <CheckCircle2
-                    size={56}
-                    className="mx-auto mb-4"
-                    color="var(--color-oim-green)"
-                  />
-                  <h3 className="text-2xl font-bold text-[var(--color-oim-ink)] mb-2">
-                    ¡Recibimos tu solicitud!
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--color-oim-green-soft)] mb-5">
+                    <CheckCircle2 size={32} strokeWidth={2} className="text-[var(--color-oim-green-deep)]" />
+                  </div>
+                  <h3 className="font-display text-[26px] font-medium mb-3 text-[var(--color-oim-ink)]">
+                    Listo, {form.nombre.split(" ")[0]}.
                   </h3>
-                  <p className="text-[var(--color-oim-ink)]/70">
-                    Un asesor de OIM te contactará en menos de 24 horas hábiles.
+                  <p className="text-[15px] leading-relaxed text-[var(--color-oim-ink-soft)] max-w-md mx-auto">
+                    Margarita te está enviando WhatsApp ahora mismo. Revisa tu celular
+                    en los próximos 30 segundos. Si no lo ves, escríbenos directo.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm(initialState);
+                      setStatus("idle");
+                    }}
+                    className="mt-7 text-[13px] font-mono uppercase tracking-[0.22em] text-[var(--color-oim-ink-soft)] hover:text-[var(--color-oim-orange-deep)] transition-colors"
+                  >
+                    ← Cotizar otro seguro
+                  </button>
                 </div>
               ) : (
                 <>
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <Field label="Nombre completo" name="nombre" required />
-                    <Field
-                      label="WhatsApp / Teléfono"
-                      name="telefono"
-                      type="tel"
-                      placeholder="+593 ..."
-                      required
-                    />
+                  {/* ────── Campos base ────── */}
+                  <div className="space-y-5">
+                    <div>
+                      <label htmlFor="nombre">Nombre completo *</label>
+                      <input
+                        id="nombre"
+                        type="text"
+                        value={form.nombre}
+                        onChange={(e) => update("nombre", e.target.value)}
+                        placeholder="María Andrade"
+                        required
+                        autoComplete="name"
+                      />
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="whatsapp">WhatsApp *</label>
+                        <input
+                          id="whatsapp"
+                          type="tel"
+                          value={form.whatsapp}
+                          onChange={(e) => update("whatsapp", e.target.value)}
+                          placeholder="0998 765 432"
+                          required
+                          autoComplete="tel"
+                          inputMode="tel"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="email">Email (opcional)</label>
+                        <input
+                          id="email"
+                          type="email"
+                          value={form.email}
+                          onChange={(e) => update("email", e.target.value)}
+                          placeholder="maria@ejemplo.com"
+                          autoComplete="email"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Selector producto · radio buttons grandes */}
+                    <div>
+                      <label>¿Qué seguro te interesa? *</label>
+                      <div role="radiogroup" className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
+                        {productos.map((p) => (
+                          <button
+                            key={p.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={form.producto === p.value}
+                            onClick={() => update("producto", p.value)}
+                            className={`px-3 py-3 rounded-lg border text-[14px] font-medium transition-all ${
+                              form.producto === p.value
+                                ? "bg-[var(--color-oim-orange-deep)] text-white border-[var(--color-oim-orange-deep)] shadow-md"
+                                : "bg-white text-[var(--color-oim-ink-soft)] border-[var(--color-oim-line-strong)] hover:border-[var(--color-oim-orange-deep)] hover:text-[var(--color-oim-ink)]"
+                            }`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ────── Expansión condicional Auto ────── */}
+                    <AnimatePresence>
+                      {expansionAuto && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                            <div>
+                              <label htmlFor="anio">Año del vehículo *</label>
+                              <input
+                                id="anio"
+                                type="number"
+                                min="1990"
+                                max="2027"
+                                value={form.anio_vehiculo}
+                                onChange={(e) => update("anio_vehiculo", e.target.value)}
+                                placeholder="2018"
+                                required={expansionAuto}
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="placa">Placa (opcional)</label>
+                              <input
+                                id="placa"
+                                type="text"
+                                value={form.placa}
+                                onChange={(e) => update("placa", e.target.value.toUpperCase())}
+                                placeholder="PCQ-1234"
+                                maxLength={10}
+                              />
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* ────── Expansión condicional Salud ────── */}
+                    <AnimatePresence>
+                      {expansionSalud && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                          className="overflow-hidden"
+                        >
+                          <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                            <div>
+                              <label htmlFor="edad">Tu edad *</label>
+                              <input
+                                id="edad"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={form.edad}
+                                onChange={(e) => update("edad", e.target.value)}
+                                placeholder="38"
+                                required={expansionSalud}
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor="cobertura">Cobertura para</label>
+                              <select
+                                id="cobertura"
+                                value={form.cobertura_familiar}
+                                onChange={(e) =>
+                                  update("cobertura_familiar", e.target.value as FormState["cobertura_familiar"])
+                                }
+                              >
+                                <option value="">— Elige —</option>
+                                <option value="yo">Solo yo</option>
+                                <option value="yo_pareja">Yo + pareja</option>
+                                <option value="familia">Familia completa</option>
+                              </select>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* ────── Consent LOPDP ────── */}
+                    <label
+                      htmlFor="consent"
+                      className="flex items-start gap-3 cursor-pointer normal-case font-normal tracking-normal mt-2"
+                    >
+                      <input
+                        id="consent"
+                        type="checkbox"
+                        checked={form.consent}
+                        onChange={(e) => update("consent", e.target.checked)}
+                        className="!w-5 !h-5 !p-0 mt-0.5 accent-[var(--color-oim-orange-deep)] cursor-pointer flex-shrink-0"
+                        required
+                      />
+                      <span className="text-[12.5px] leading-[1.55] text-[var(--color-oim-ink-soft)]">
+                        Acepto que OIM Seguros procese mis datos personales conforme a la{" "}
+                        <a
+                          href="#"
+                          target="_blank"
+                          className="text-[var(--color-oim-orange-deep)] hover:underline"
+                        >
+                          Ley Orgánica de Protección de Datos Personales del Ecuador
+                        </a>{" "}
+                        para que me contacten por WhatsApp, llamada o correo.
+                      </span>
+                    </label>
                   </div>
-                  <Field
-                    label="Correo electrónico"
-                    name="email"
-                    type="email"
-                    required
-                  />
-                  <Select
-                    label="Tipo de seguro de interés"
-                    name="tipo"
-                    options={tiposSeguro}
-                    required
-                  />
-                  <Field
-                    label="Cuéntanos brevemente lo que necesitas"
-                    name="mensaje"
-                    multiline
-                  />
 
-                  <p className="text-xs text-[var(--color-oim-ink)]/55 leading-relaxed">
-                    Al enviar este formulario aceptas que un asesor de OIM
-                    Seguros te contacte por los medios proporcionados con fines
-                    comerciales y de asesoramiento.
-                  </p>
-
+                  {/* ────── Botón submit ────── */}
                   <button
                     type="submit"
-                    disabled={status === "sending"}
-                    className="btn-primary w-full !py-4 disabled:opacity-70 disabled:cursor-not-allowed"
+                    disabled={!valid || status === "submitting"}
+                    className="btn-primary w-full mt-7 !py-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {status === "sending" ? (
+                    {status === "submitting" ? (
                       <>
-                        <Loader2 className="animate-spin" size={18} />
-                        Enviando...
+                        <Loader2 size={18} className="animate-spin" />
+                        Enviando…
                       </>
                     ) : (
                       <>
-                        Recibir cotización en 24h
-                        <Send size={16} />
+                        Pídeme mi cotización
+                        <Send size={16} strokeWidth={2.4} />
                       </>
                     )}
                   </button>
+
+                  <p className="mt-4 text-center text-[12px] text-[var(--color-oim-ink-faint)] leading-relaxed">
+                    En menos de 1 minuto recibes WhatsApp con tu asesor. Sin compromiso.
+                  </p>
+
+                  {status === "error" && errorMsg && (
+                    <div className="mt-4 p-3 rounded-lg bg-red-50 text-red-800 text-[13px] border border-red-200">
+                      {errorMsg}
+                    </div>
+                  )}
                 </>
               )}
             </form>
@@ -154,83 +412,5 @@ export function Formulario() {
         </div>
       </div>
     </section>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  placeholder,
-  required,
-  multiline,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  multiline?: boolean;
-}) {
-  const baseCls =
-    "w-full px-4 py-3 rounded-xl border-2 border-[var(--color-oim-line)] bg-white text-[var(--color-oim-ink)] text-sm focus:outline-none focus:border-[var(--color-oim-orange)] transition-colors";
-  return (
-    <label className="block">
-      <span className="block text-xs font-bold uppercase tracking-[1.5px] text-[var(--color-oim-ink)]/65 mb-2">
-        {label} {required && <span className="text-[var(--color-oim-orange)]">*</span>}
-      </span>
-      {multiline ? (
-        <textarea
-          name={name}
-          rows={3}
-          placeholder={placeholder}
-          required={required}
-          className={baseCls + " resize-none"}
-        />
-      ) : (
-        <input
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          required={required}
-          className={baseCls}
-        />
-      )}
-    </label>
-  );
-}
-
-function Select({
-  label,
-  name,
-  options,
-  required,
-}: {
-  label: string;
-  name: string;
-  options: string[];
-  required?: boolean;
-}) {
-  return (
-    <label className="block">
-      <span className="block text-xs font-bold uppercase tracking-[1.5px] text-[var(--color-oim-ink)]/65 mb-2">
-        {label} {required && <span className="text-[var(--color-oim-orange)]">*</span>}
-      </span>
-      <select
-        name={name}
-        required={required}
-        defaultValue=""
-        className="w-full px-4 py-3 rounded-xl border-2 border-[var(--color-oim-line)] bg-white text-[var(--color-oim-ink)] text-sm focus:outline-none focus:border-[var(--color-oim-orange)] transition-colors appearance-none cursor-pointer"
-      >
-        <option value="" disabled>
-          Selecciona una opción
-        </option>
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }
