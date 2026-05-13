@@ -1,48 +1,61 @@
 import type { Metadata } from "next";
-import { Poppins, Open_Sans } from "next/font/google";
+import { Fraunces, Figtree, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
+// Display — Fraunces variable serif con axes SOFT/WONK para personalidad editorial cálida
+// En Next.js 16: si declaramos `axes`, NO se puede especificar `weight` (queda como variable)
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-poppins",
+  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
-const openSans = Open_Sans({
+// Body — Figtree humanista cálida, alternativa real a Inter
+const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-open-sans",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-figtree",
+  display: "swap",
+});
+
+// Mono — JetBrains Mono para metainfo / eyebrows / footer line
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "OIM Seguros — Aseguramos Tu Bienestar",
+  title: "OIM Seguros — El broker que sí contesta a las 3 a.m.",
   description:
-    "Agencia asesora productora de seguros en Ecuador. Vehicular, hogar, médico, vida, mascotas, empresarial. Más de 200 pólizas activas y atención 24/7 ante siniestros.",
+    "Broker de seguros en Quito, Ecuador. Atención humana 24/7 ante siniestros: contestamos al primer tono. Pólizas de auto, moto, salud, vida y mascotas, diseñadas a tu medida.",
   keywords: [
-    "seguros Ecuador",
+    "broker seguros Ecuador",
     "OIM Seguros",
-    "seguro vehicular Ecuador",
-    "seguro de hogar Quito",
-    "seguro médico Ecuador",
-    "broker de seguros Ecuador",
-    "asesor de seguros",
+    "seguro vehicular Quito",
+    "seguro auto Ecuador",
+    "seguro salud Quito",
+    "seguro vida Ecuador",
+    "atención siniestros 24/7",
+    "asesor de seguros Quito",
   ],
   authors: [{ name: "OIM Seguros" }],
   openGraph: {
-    title: "OIM Seguros — Aseguramos Tu Bienestar",
+    title: "OIM Seguros — El broker que sí contesta a las 3 a.m.",
     description:
-      "Más de 200 pólizas activas. Cotiza tu seguro vehicular, de hogar, médico o empresarial en menos de 24 horas. Atención 24/7 ante siniestros.",
+      "Cuando algo pasa en la noche, OIM responde. Atención humana 24/7, asesor designado, pólizas a tu medida con las mejores aseguradoras del Ecuador.",
     type: "website",
     locale: "es_EC",
     siteName: "OIM Seguros",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OIM Seguros — Aseguramos Tu Bienestar",
+    title: "OIM Seguros — El broker que sí contesta a las 3 a.m.",
     description:
-      "Agencia asesora productora de seguros en Ecuador. Cotización en 24h.",
+      "Broker de seguros en Quito con atención humana 24/7. Pólizas a tu medida.",
   },
   robots: {
     index: true,
@@ -58,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       lang="es-EC"
-      className={`${poppins.variable} ${openSans.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${figtree.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
         <script

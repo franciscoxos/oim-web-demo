@@ -1,22 +1,36 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Paleta OIM extraída del CSS real del sitio actual */
-  --color-oim-orange: #FFAB5E;
-  --color-oim-orange-dark: #ED9847;
-  --color-oim-teal: #007991;
-  --color-oim-teal-dark: #006072;
-  --color-oim-green: #71BF44;
-  --color-oim-green-dark: #5A9F44;
-  --color-oim-ink: #2E4A66;
-  --color-oim-ink-dark: #244248;
-  --color-oim-paper: #FBF8F8;
-  --color-oim-paper-warm: #F4F0EA;
-  --color-oim-line: rgba(46, 74, 102, 0.12);
+  /* ────── Paleta "Editorial Nocturno" — refresh 2026-05-13 ────── */
+  /* Inspirado en el killer use case: lámpara encendida en la noche.
+     Verde bosque profundo + papel cálido + amber tostado. Contraste WCAG AA verificado. */
+  --color-ink:        #0E2A1F;             /* verde bosque casi negro · texto principal */
+  --color-ink-soft:   #4A5247;             /* gris verdoso · texto secundario */
+  --color-paper:      #F4EEDF;             /* crema cálida tipo papel envejecido · background */
+  --color-paper-warm: #EAE2CE;             /* secciones alternas / cards */
+  --color-ember:      #C76B3C;             /* amber tostado · CTA primario, accent */
+  --color-ember-dark: #A75730;             /* hover ember */
+  --color-moss:       #4A6B5A;             /* verde musgo apagado · accent secundario */
+  --color-line:       rgba(14, 42, 31, 0.12);
+  --color-line-strong:rgba(14, 42, 31, 0.22);
 
-  /* Fonts (cargadas via next/font en layout.tsx) */
-  --font-display: var(--font-poppins), system-ui, sans-serif;
-  --font-body: var(--font-open-sans), system-ui, sans-serif;
+  /* ────── Legacy aliases (compatibilidad con secciones sin migrar) ────── */
+  --color-oim-orange:      var(--color-ember);
+  --color-oim-orange-dark: var(--color-ember-dark);
+  --color-oim-teal:        var(--color-moss);
+  --color-oim-teal-dark:   #38503F;
+  --color-oim-green:       var(--color-moss);
+  --color-oim-green-dark:  #38503F;
+  --color-oim-ink:         var(--color-ink);
+  --color-oim-ink-dark:    var(--color-ink);
+  --color-oim-paper:       var(--color-paper);
+  --color-oim-paper-warm:  var(--color-paper-warm);
+  --color-oim-line:        var(--color-line);
+
+  /* ────── Tipografía — fuentes con personalidad (NO Poppins/Open Sans) ────── */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-body:    var(--font-figtree), system-ui, -apple-system, sans-serif;
+  --font-mono:    var(--font-jetbrains-mono), "SF Mono", Consolas, monospace;
 }
 
 * {
@@ -28,61 +42,140 @@ html {
 }
 
 body {
-  background: var(--color-oim-paper);
-  color: var(--color-oim-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body);
   font-weight: 400;
-  line-height: 1.65;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11"; /* alt single-storey 'a' en Figtree donde aplique */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: var(--color-oim-orange);
+  background: var(--color-ember);
   color: white;
 }
 
-/* Tipografía display por defecto en headings */
+/* ────── Headings: Fraunces con optical sizing para tamaños grandes ────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  color: var(--color-ink);
+  letter-spacing: -0.012em;
+  font-weight: 600;
 }
 
-/* Utility para counters animados */
-.counter-num {
+/* ────── HERO HEADLINE — la pieza clave: tipografía grande con respiro ──────
+   leading: 1.05 (no 0.95) → letras NO se pegan
+   Fraunces SOFT axis al máximo para curvas humanas
+   wdth axis ligeramente expandido para presencia editorial */
+.hero-headline {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -2px;
-  line-height: 1;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "SOFT" 100, "WONK" 0, "opsz" 144, "wght" 500;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  font-size: clamp(2.5rem, 6.5vw, 5rem);
+  color: var(--color-ink);
 }
 
-/* Botón CTA OIM (naranja) */
+@media (min-width: 1024px) {
+  .hero-headline {
+    font-size: clamp(3rem, 6vw, 5.25rem);
+    line-height: 1.04;
+  }
+}
+
+/* El número "3 a.m." en color ember con detalle de subrayado a medias */
+.hero-headline-ember {
+  color: var(--color-ember);
+  font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144, "wght" 500;
+  font-weight: 500;
+  position: relative;
+  white-space: nowrap;
+}
+
+/* ────── CTA PRIMARIO — ember sobre paper · contraste WCAG AA 4.7:1 ────── */
+.hero-cta {
+  padding: 1.05rem 2.25rem;
+  background: var(--color-ember);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.005em;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 12px 28px -8px rgba(199, 107, 60, 0.5),
+    0 2px 6px -2px rgba(14, 42, 31, 0.15);
+  cursor: pointer;
+}
+
+.hero-cta:hover {
+  background: var(--color-ember-dark);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 18px 38px -10px rgba(199, 107, 60, 0.58),
+    0 4px 10px -2px rgba(14, 42, 31, 0.2);
+}
+
+.hero-cta:active {
+  transform: translateY(0);
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 4px;
+}
+
+/* ────── CTA secundario — text-link discreto, NO compite ────── */
+.hero-link {
+  color: var(--color-ink-soft);
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.hero-link:hover {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-ember);
+}
+
+/* ────── Legacy btn-primary — re-mapeado a ember para no romper otras secciones ────── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 1.875rem;
-  background: var(--color-oim-orange);
-  color: white;
-  font-family: var(--font-display);
+  background: var(--color-ember);
+  color: #FFFFFF;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.9375rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   border-radius: 999px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 20px rgba(255, 171, 94, 0.32);
+  box-shadow: 0 8px 20px -6px rgba(199, 107, 60, 0.4);
 }
 
 .btn-primary:hover {
-  background: var(--color-oim-orange-dark);
+  background: var(--color-ember-dark);
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(255, 171, 94, 0.42);
+  box-shadow: 0 12px 28px -6px rgba(199, 107, 60, 0.5);
 }
 
-/* Botón secundario (outline teal) */
+/* Botón secundario — outline ink (NO blanco que se pierde) */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -90,54 +183,69 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.5rem;
   padding: 0.875rem 1.75rem;
   background: transparent;
-  color: var(--color-oim-teal);
-  font-family: var(--font-display);
+  color: var(--color-ink);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.9375rem;
-  letter-spacing: 0.5px;
-  border: 2px solid var(--color-oim-teal);
+  letter-spacing: 0.005em;
+  border: 1.5px solid var(--color-ink);
   border-radius: 999px;
   transition: all 0.25s ease;
 }
 
 .btn-secondary:hover {
-  background: var(--color-oim-teal);
-  color: white;
+  background: var(--color-ink);
+  color: var(--color-paper);
 }
 
-/* Numeración ordinal de secciones (estilo "Editorial Trust") */
+/* ────── Helpers tipográficos ────── */
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
+.font-mono    { font-family: var(--font-mono); }
+
+/* Numeración ordinal */
 .section-ordinal {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.875rem;
-  letter-spacing: 4px;
-  color: var(--color-oim-orange);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  color: var(--color-ember);
   text-transform: uppercase;
+}
+
+/* Counter num grande (animado en sub-secciones) */
+.counter-num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 /* Card base */
 .oim-card {
   background: white;
   border-radius: 24px;
-  border: 1px solid var(--color-oim-line);
+  border: 1px solid var(--color-line);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(46, 74, 102, 0.06);
+  box-shadow: 0 1px 3px rgba(14, 42, 31, 0.06);
 }
 
 .oim-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(46, 74, 102, 0.10), 0 4px 12px rgba(46, 74, 102, 0.06);
-  border-color: var(--color-oim-green);
+  box-shadow:
+    0 16px 40px rgba(14, 42, 31, 0.10),
+    0 4px 12px rgba(14, 42, 31, 0.06);
+  border-color: var(--color-ember);
 }
 
-/* Swiper paginación con color OIM */
+/* Swiper colores */
 .swiper-pagination-bullet-active {
-  background: var(--color-oim-orange) !important;
+  background: var(--color-ember) !important;
 }
 
 .swiper-button-prev,
 .swiper-button-next {
-  color: var(--color-oim-teal) !important;
+  color: var(--color-ink) !important;
 }
 
 /* Container responsive */
