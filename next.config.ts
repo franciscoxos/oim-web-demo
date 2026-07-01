@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
-  basePath: process.env.GH_PAGES === "1" ? "/oim-web-demo" : "",
-  assetPrefix: process.env.GH_PAGES === "1" ? "/oim-web-demo/" : "",
+  basePath: process.env.SUBPATH ? `/${process.env.SUBPATH}` : "",
+  assetPrefix: process.env.SUBPATH ? `/${process.env.SUBPATH}/` : "",
 };
 
 export default nextConfig;
